@@ -13,6 +13,11 @@ Let the 'matches' begin
 
 This API was based off the following Swagger API Documentation: http://petstore.swagger.io/?url=http://docs.anow.com/api-sample/ping-pong.yml
 
+##Run Server
+######Use Strict Mode
+node -use_strict ping-pong-server.js
+
+
 ##Test API
 
 **You can test this API with the following curl commands (Tested on my local windows machine using port 3000):**
