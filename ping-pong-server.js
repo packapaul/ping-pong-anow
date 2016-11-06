@@ -122,17 +122,33 @@ app.post('/matches', jsonParser,function(req,res){
 	}
 
 	function addMatch(obj){
-		try {
-			//after validation we can add this match to the data file
-			var fs = require('fs')
-		  	var configFile = fs.readFileSync('./ping-pong-data.json')
-		  	var config = JSON.parse(configFile)
-		  	config.push(obj)
-		  	var configJSON = JSON.stringify(config)
-		  	fs.writeFileSync('./ping-pong-data.json', configJSON)
-	  	} catch (e) {
-		    return console.error("addMatch error: "+e)
-		}
+		//after validation we can add this match to the data file
+		var fs = require('fs')
+		fs.readFile('./ping-pong-data.json', 'utf8', function (err,data) {
+			//handle error if issues with JSON doc
+			if(err) {
+				console.log('Reading JSON data Error: '+err)
+			    return
+			}
+
+			try{
+				//parse the JSON doc
+			  	var config = JSON.parse(data)
+		  	} catch (e) {
+			    console.error("Parsing JSON data error: "+e)
+			    return false
+			}
+
+  			config.push(obj)
+  			var configJSON = JSON.stringify(config)
+
+			fs.writeFile('./ping-pong-data.json', configJSON, function(error){
+                		if(error) {
+					console.log('Writing JSON data Error: '+error)
+			    		return
+				}
+            		})
+		})
 	}
 
 	//json error response
@@ -144,7 +160,7 @@ app.post('/matches', jsonParser,function(req,res){
 })
 
 app.use(function(err, req, res, next) {
-  console.error(err.stack);
+  console.error(err.stack)
   res.status(500).send('You broke it!')
 })
 
