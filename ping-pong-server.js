@@ -18,6 +18,7 @@ app.get('/matches', urlencodedParser,function(req,res){
 	if (!req.body) return res.sendStatus(400)
 
 	console.log("running: get /matches")
+
 	//read data file and display array of the past ping pong matches in ascending order of date played
 	var fs = require('fs')
 	fs.readFile('./ping-pong-data.json', 'utf8', function (err,data) {
@@ -31,7 +32,7 @@ app.get('/matches', urlencodedParser,function(req,res){
 			//parse the JSON doc
 		  	data = JSON.parse(data)
 	  	} catch (e) {
-		    console.error("Parsing JSON data error: "+e);
+		    console.error("Parsing JSON data error: "+e)
 		    return false
 		}
 	  	//organize the data appropriatly
@@ -40,7 +41,7 @@ app.get('/matches', urlencodedParser,function(req,res){
 
 	//if we ever want to sort by other properties might as well just make it a function
   	function sortAscending(compareVar, obj) {
-	    sortedData = obj.sort(function(a, b) {
+	    var sortedData = obj.sort(function(a, b) {
 	    	return (new Date(a[compareVar]) > new Date(b[compareVar])) ? 1 : ((new Date(a[compareVar]) < new Date(b[compareVar])) ? -1 : 0)
 	    })
 	    //print the sorted data
@@ -50,9 +51,10 @@ app.get('/matches', urlencodedParser,function(req,res){
 	//spit out some nicely formated data
 	function displayData(obj){
 		res.writeHead(200, {'Content-Type': 'text/html'})
-	    res.write(JSON.stringify(sortedData, null,'\t'))
+	    res.write(JSON.stringify(obj, null,'\t'))
 	    res.end()
 	}
+
 })
 
 
@@ -91,8 +93,8 @@ app.post('/matches', jsonParser,function(req,res){
 			        	return false
 			        }else if(key === "sets"){
 			        	//check set logic
-			        	for (index = 0; index < obj[key].length; ++index) {
-						    mySet = obj[key][index];
+			        	for (var index = 0; index < obj[key].length; ++index) {
+						    var mySet = obj[key][index]
 						    //only concerned with winner comparision
 						    if(mySet.winner.points < 21 || mySet.winner.points < mySet.loser.points+2){
 						    	sendError("Invalid Winner in set "+index,mySet.winner)
@@ -112,7 +114,7 @@ app.post('/matches', jsonParser,function(req,res){
 			    }
 			}
 		} catch (e) {
-		    console.error("validateJson error: "+e);
+		    console.error("validateJson error: "+e)
 		    return false
 		}
 		//if all checks have passed then we can conlcude valid JSON input
@@ -129,7 +131,7 @@ app.post('/matches', jsonParser,function(req,res){
 		  	var configJSON = JSON.stringify(config)
 		  	fs.writeFileSync('./ping-pong-data.json', configJSON)
 	  	} catch (e) {
-		    return console.error("addMatch error: "+e);
+		    return console.error("addMatch error: "+e)
 		}
 	}
 
@@ -143,10 +145,10 @@ app.post('/matches', jsonParser,function(req,res){
 
 app.use(function(err, req, res, next) {
   console.error(err.stack);
-  res.status(500).send('You broke it!');
+  res.status(500).send('You broke it!')
 })
 
 //open port 3000 to listen on local machine - testing on local
 app.listen(3000,function(){
-  console.log("Opening Doors to Mordor PORT 3000");
+  console.log("Opening Doors to Mordor PORT 3000")
 })
